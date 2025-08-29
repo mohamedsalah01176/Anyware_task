@@ -7,7 +7,10 @@ import {
 } from "@mui/material";
 import { theme } from "../../util/theme";
 import type { ICourse } from "../../interfaces/course";
-const CourseCard = ({course}:{course:ICourse}) => {
+import type { IUserBody } from "../../interfaces/user";
+
+
+const CourseCard = ({course,decoded,handleDeleteCourse}:{course:ICourse,decoded:IUserBody | null,handleDeleteCourse:(id:string)=>void}) => {
   return (
     <Card
       key={course._id}
@@ -32,12 +35,20 @@ const CourseCard = ({course}:{course:ICourse}) => {
       </CardContent>
 
       <CardActions sx={{ justifyContent: "flex-end" }}>
+        
         <Button size="small" variant="contained" color="primary" sx={{"&:hover":{background:theme.palette.secondary.main,color:theme.palette.primary.main}}}>
           View
         </Button>
-        <Button size="small" variant="outlined" sx={{color:theme.palette.primary.main}}>
+
+        {decoded?.role === "student" ?
+        <Button size="small" variant="outlined" color="primary" >
           Enroll
         </Button>
+        :
+        <Button size="small" variant="outlined" color="error" onClick={()=>handleDeleteCourse(course._id)}>
+          Dlete
+        </Button>
+        }
       </CardActions>
     </Card>
   )

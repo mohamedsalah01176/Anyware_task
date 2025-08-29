@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Box, Container, Fab, Grid, InputAdornment, TextField, Typography} from "@mui/material";
 import QuizCard from "../components/Quiz/QuizCard";
 import StartQuizPopup from "../components/Quiz/StartQuizPopup";
@@ -9,59 +9,40 @@ import {
   Search as SearchIcon,
 } from "@mui/icons-material"
 import { theme } from "../util/theme";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../lib/store";
+import {  deleteQuiz, fetchQuizzesForUser } from "../lib/slices/quizze";
+import Loader from "../components/Loader/Loader";
 
 
-const quizzes: IQuiz[] = [
-  {
-    _id: "66cf2e9f8a2fbc1e6d9e1b23",
-    title: "JavaScript Basics",
-    description: "Test your JS knowledge",
-    course: {
-      _id:"1",
-      title: "JavaScript Basics",
-      description: "Test your JS knowledge",
-      numberQuiz: 1,
-    },
-    questions: [],
-    teacherId: "t1",
-    numberStudent: 0,
-    scores: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "66cf2e9f8a2fbc1e6d9e1b24",
-    title: "React Quiz",
-    description: "All about React hooks and components",
-    course: {
-      _id:"2",
-      title: "React Quiz",
-      description: "All about React hooks and components",
-      numberQuiz: 1,
-    },
-    questions: [],
-    teacherId: "t2",
-    numberStudent: 0,
-    scores: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
 
 
 export default function QuizList() {
   // const [quizzes, setQuizzes] = useState<IQuiz[]>([]);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [selectedQuiz, setSelectedQuiz] = useState<IQuiz>();
-    const nav=useNavigate();
-    const [query, setQuery] = useState("");
+  const {decoded}=useSelector((state:RootState)=>state.users)
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedQuiz, setSelectedQuiz] = useState<IQuiz>();
+  const nav=useNavigate();
+  const [query, setQuery] = useState("");
+  const {quizzes,loading}=useSelector((state:RootState)=>state.quiz);
+  const dispatch=useDispatch<AppDispatch>(); 
 
+  useEffect(()=>{
+    dispatch(fetchQuizzesForUser());
+  },[dispatch])
+
+  console.log(quizzes);
   const handleSelectQuiz = useCallback((item: IQuiz) => {
-    setOpenDialog(true)
-    setSelectedQuiz(item)
+    setOpenDialog(true);
+    setSelectedQuiz(item);
     // navigate(`/quiz/${quizId}`) مثلا
   },[]);
   
+  const handleDeleteQuize=(quizId:string)=>{
+    dispatch(deleteQuiz(quizId));
+    dispatch(fetchQuizzesForUser());
+  }
+
   const startSelectQuiz = useCallback((quizId: string) => {
     setOpenDialog(false)
     nav(`/quizzes/${quizId}`)
@@ -74,9 +55,13 @@ export default function QuizList() {
 
 
 
-
   return (
     <Container  sx={{ py: 4 }}>
+      {loading &&
+        <Box sx={{position:"fixed" ,left:0,top:0,width:"100%",minHeight:"100%", background:"rgba(204, 204, 204, 0.6)",display:"flex",justifyContent:"center",alignItems:"center",zIndex:"10"}}>
+          <Loader/>
+        </Box>
+      }
       <Box
         sx={{
           display: "flex",
@@ -104,24 +89,31 @@ export default function QuizList() {
           }}
         />
 
-        <Fab
-          color="primary"
-          aria-label="add"
-          onClick={()=>nav("/addQuiz")}
-          size="medium"
-          sx={{ ml: { xs: 0, sm: 1,"&:hover":{background:theme.palette.secondary.main,color:theme.palette.primary.main} } }}
-        >
-          <AddIcon />
-        </Fab>
+        {decoded?.role === "teacher" &&
+          <Fab
+            color="primary"
+            aria-label="add"
+            onClick={()=>nav("/addQuiz")}
+            size="medium"
+            sx={{ ml: { xs: 0, sm: 1,"&:hover":{background:theme.palette.secondary.main,color:theme.palette.primary.main} } }}
+          >
+            <AddIcon />
+          </Fab>
+          
+        }
       </Box>
       <Grid container spacing={3} sx={{ mt: 2,display:"flex", justifyContent:"center" }} padding={3} paddingTop={7}>
-        {quizzes.map((quiz) => {
-        
+        {quizzes.length>0?
+          quizzes.map((quiz) => {
           return(
-            <QuizCard quiz={quiz} handleSelectQuiz={handleSelectQuiz} />
+            <QuizCard key={quiz._id} quiz={quiz} handleSelectQuiz={handleSelectQuiz} handleDeleteQuize={handleDeleteQuize} />
           )
+        })
+        :
+        <Typography variant="body1" color="textSecondary">
+          No quizzes available.
+        </Typography>
         }
-        )}
         <StartQuizPopup handleClose={handleClose} startSelectQuiz={startSelectQuiz} openDialog={openDialog} selectedQuiz={selectedQuiz as IQuiz}/>
       </Grid>
     </Container>

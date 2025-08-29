@@ -11,62 +11,55 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import type { AppDispatch, RootState } from "../lib/store";
+import { getSpecificQuiz } from "../lib/slices/quizze";
 import type { IQuiz } from "../interfaces/quiz";
-
+import ResultPopup from "../components/StartQuize/ResultPopup";
 
 
 
 const StartQuiz = () => {
   const { quizId } = useParams();
-  const navigate = useNavigate();
-
-  const quiz: IQuiz = {
-  _id: quizId || "1",
-  course: {
-    title: "JavaScript Basics",
-    description: "Test your JS knowledge",
-    numberQuiz: 1,
-  },
-  questions: [
-    {
-      _id: "q1",
-      question: "Which keyword is used to declare a constant in JS?",
-      answers: [
-        { text: "var", isCorrect: false },
-        { text: "let", isCorrect: false },
-        { text: "const", isCorrect: true },
-        { text: "define", isCorrect: false },
-      ],
-    },
-    {
-      _id: "q2",
-      question: "What is the output of typeof null?",
-      answers: [
-        { text: "null", isCorrect: false },
-        { text: "object", isCorrect: true },
-        { text: "undefined", isCorrect: false },
-        { text: "number", isCorrect: false },
-      ],
-    },
-  ],
-  teacherId: "t1", // أي ID للمدرس
-  numberStudent: 0, // لسه مفيش طلبة
-  scores: [], // لسه محدش حل الكويز
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
-
+  const nav = useNavigate();
+  const { quiz }: { quiz: IQuiz | null } = useSelector((state: RootState) => state.quiz);
+  const dispatch = useDispatch<AppDispatch>();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [openResult, setOpenResult] = useState(false);
+  const [score, setScore] = useState<number | null>(null);
 
-  const currentQuestion = quiz.questions[currentIndex];
+
+  useEffect(() => {
+    if (quizId) {
+      dispatch(getSpecificQuiz(quizId));
+    }
+  }, [dispatch, quizId]);
+
+  useEffect(() => {
+    const handleWindowClose = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+      console.log(e,"eeeeeeeeeee")
+      nav("/quizzes")
+    };
+    window.addEventListener("beforeunload", handleWindowClose);
+    return () => window.removeEventListener("beforeunload", handleWindowClose);
+  }, []);
+
+
+  const currentQuestion = quiz?.questions?.[currentIndex];
 
   const handleAnswerChange = (value: string) => {
-    setAnswers((prev) => ({ ...prev, [currentQuestion._id]: value }));
+    if (currentQuestion) {
+      setAnswers((prev) => ({ ...prev, [currentQuestion._id]: value }));
+    }
   };
 
   const handleSubmit = () => {
+    if (!quiz) return;
     let score = 0;
     quiz.questions.forEach((q) => {
       const selected = answers[q._id];
@@ -74,18 +67,44 @@ const StartQuiz = () => {
       if (selected === correct) score++;
     });
 
-    alert(`You scored ${score} / ${quiz.questions.length}`);
-    navigate("/quizzes");
+    setScore(score);
+    setOpenResult(true)
+  };
+
+  const handleNavigation = () => {
+    const answer = window.prompt("Type YES to leave the quiz");
+    if (answer === "YES") {
+      nav("/quizzes"); // Redirect لو كتب YES
+    } else {
+      // يبقى الطالب في نفس الصفحة
+      alert("You stayed in the quiz");
+    }
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 8 ,height:"80vh",display:"flex",justifyContent:"center", alignItems:"center",width:"100%"}}>
-      <Paper elevation={4} sx={{ p: 4, borderRadius: 3,width:"100%" }}>
-        <Typography variant="h5" gutterBottom>
-          {quiz.course.title}
-        </Typography>
+    <Container
+      maxWidth="md"
+      sx={{
+        mt: 8,
+        height: "80vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+      }}
+    >
+      <ResultPopup score={score} openResult={openResult} quiz={quiz} setOpenResult={setOpenResult} />
+      <Paper elevation={4} sx={{ p: 4, borderRadius: 3, width: "100%" }}>
+        <Box sx={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+          <Typography variant="h5" gutterBottom>
+            {quiz?.course?.title}
+          </Typography>
+          <Button variant="outlined" color="error" onClick={handleNavigation}>
+            Leave Quiz
+          </Button>
+        </Box>
         <Typography variant="h6" gutterBottom>
-          Question {currentIndex + 1} of {quiz.questions.length}
+          Question {currentIndex + 1} of {quiz.questions?.length}
         </Typography>
         <Typography sx={{ mb: 2 }}>{currentQuestion.question}</Typography>
 

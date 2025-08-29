@@ -19,18 +19,19 @@ import AuthLayout from './layout/AuthLayout';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import { Provider } from 'react-redux'
-import { store } from './assets/lib/store';
+import { store } from './lib/store';
+import UnResiteredProtectedRoute from './HOC/UnResiteredProtectedRoute';
+import RegisteredProtectedRoute from './HOC/RegisteredProtectedRoute';
 
 
 const router = createBrowserRouter([
-  {path: "/",element:<AuthLayout/>,children:[
-    {index:true,path:"",element:<Register/>},
+  {path: "/",element:<RegisteredProtectedRoute><AuthLayout/></RegisteredProtectedRoute>,children:[
+    {index:true,element:<Register/>},
     {path:"/register",element:<Register/>},
     {path:"/login",element:<Login/>},
   ]},
-  {path: "/",element:<UserLayout/>,children:[
-    {index:true,path:"",element:<MainDashboar/>},
-    {path:"/dashboard",element:<MainDashboar/>},
+  {path: "/",element:<UnResiteredProtectedRoute><UserLayout/></UnResiteredProtectedRoute>,children:[
+    {index:true,path:"dashboard",element:<MainDashboar/>},
     {path:"/quizzes",element:<Quizze/>},
     {path:"/quizzes/:quizId",element:<StartQuiz/>},
     {path:"/courses",element:<Course/>},
@@ -46,6 +47,7 @@ function App() {
   const savedLang = localStorage.getItem("lang");
   const browserLang = navigator.language.split("-")[0];
 
+  
   const resources={
     en:{
       translation: transitionEn

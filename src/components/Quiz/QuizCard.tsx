@@ -2,12 +2,16 @@ import { Grid, Card, CardContent, Typography, Button, Box } from "@mui/material"
 import { theme } from "../../util/theme";
 import type { IQuiz } from "../../interfaces/quiz";
 
+
 interface IProps{
   quiz:IQuiz,
   handleSelectQuiz:(item:IQuiz)=>void,
+  handleDeleteQuize:(quizId:string)=>void,
 }
 
-const QuizCard = ({quiz,handleSelectQuiz}:IProps) => {
+const QuizCard = ({quiz,handleSelectQuiz,handleDeleteQuize}:IProps) => {
+
+
   return (
     <Grid item xs={12} sm={6} md={4} key={quiz._id}>
       <Card sx={{width:"290px", height:"160px"}}>
@@ -18,17 +22,30 @@ const QuizCard = ({quiz,handleSelectQuiz}:IProps) => {
               {quiz.description}
             </Typography>
           </Box>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            sx={{"&:hover":{
-              background:theme.palette.secondary.main,
-              color:theme.palette.primary.main
-            }}}
-            onClick={() =>{ handleSelectQuiz(quiz)}}
-          >
-            Start Quiz
-          </Button>
+
+          <Box sx={{display:"flex", gap:2,justifyContent:"flex-end"}}>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              sx={{"&:hover":{
+                background:theme.palette.secondary.main,
+                color:theme.palette.primary.main
+              }}}
+              onClick={() =>{ handleSelectQuiz(quiz)}}
+            >
+              Start Quiz
+            </Button>
+            <Button 
+              variant="outlined"  
+              sx={{
+                background:theme.palette.secondary.light,
+                color:theme.palette.primary.main
+              }}
+              onClick={() =>handleDeleteQuize(quiz._id)}
+            >
+              Dlete
+            </Button>
+          </Box>
         </CardContent>
       </Card>
     </Grid>

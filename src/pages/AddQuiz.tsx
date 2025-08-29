@@ -5,28 +5,47 @@ import {
   Typography,
   Card,
   CardContent,
-  IconButton,
   Radio,
   FormControlLabel,
   RadioGroup,
 } from "@mui/material";
-import { Add, Delete } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import { useFormik, FieldArray, FormikProvider } from "formik";
 import * as Yup from "yup";
-
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../lib/store";
+import { addQuiz } from "../lib/slices/quizze";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import Loader from "../components/Loader/Loader";
+type AnswerForm = {
+  text: string;
+  isCorrect:boolean
+};
 
 type QuestionForm = {
   question: string;
-  answers: string[];
+  answers: AnswerForm[];
   correctAnswer: number;
 };
 
 type QuizForm = {
+  course: {
+    title: string;
+    description: string;
+  };
   title: string;
   description: string;
   questions: QuestionForm[];
 };
+
+
+
 const validationSchema = Yup.object({
+  course: Yup.object({
+    title: Yup.string().required("Course title is required"),
+    description: Yup.string().required("Course description is required"),
+  }),
   title: Yup.string().required("Quiz title is required"),
   description: Yup.string().required("Description is required"),
   questions: Yup.array()
@@ -34,7 +53,11 @@ const validationSchema = Yup.object({
       Yup.object({
         question: Yup.string().required("Question is required"),
         answers: Yup.array()
-          .of(Yup.string().required("Answer is required"))
+          .of(
+            Yup.object({
+              text: Yup.string().required("Answer is required"),
+            })
+          )
           .min(2, "At least 2 answers are required"),
         correctAnswer: Yup.number()
           .min(0, "Must select a correct answer")
@@ -44,17 +67,44 @@ const validationSchema = Yup.object({
     .min(1, "At least one question is required"),
 });
 
+
 const AddQuiz = () => {
+  const { data, loading, error } = useSelector((state: RootState) => state.quiz);
+  const dispatch = useDispatch();
+  const nav=useNavigate();
+  console.log(data);
+  console.log(error);
+
+  
   const formik = useFormik<QuizForm>({
     initialValues: {
+      course: {
+        title: "",
+        description: "",
+      },
       title: "",
       description: "",
-      questions: [{ question: "", answers: [""], correctAnswer: 0 }],
+      questions: [
+      {
+        question: "",
+        answers: [
+          { text: "", isCorrect: false },
+          { text: "", isCorrect: false },
+          { text: "", isCorrect: false },
+        ],
+        correctAnswer: 0,
+      },
+    ],
     },
     validationSchema,
-    onSubmit: (values) => {
+    onSubmit:async (values) => {
       console.log("✅ Quiz Data:", values);
-      // تقدر تبعت values للباك إند باستخدام axios.post
+      const actionResult=await dispatch(addQuiz(values));
+      const payload = actionResult.payload as { status: string; message: string; token: string };
+      if(payload.status === "success"){
+        toast.success("Quize Added")
+        nav("/quizzes")
+      }
     },
   });
 
@@ -63,12 +113,51 @@ const AddQuiz = () => {
 
   return (
     <FormikProvider value={formik}>
+      {loading &&
+        <Box sx={{position:"fixed" ,left:0,top:0,width:"100%",minHeight:"100%", background:"rgba(204, 204, 204, 0.6)",display:"flex",justifyContent:"center",alignItems:"center",zIndex:"10"}}>
+          <Loader/>
+        </Box>
+      }
       <Box sx={{ maxWidth: 700, mx: "auto", pt: 4 }}>
         <Typography variant="h4" gutterBottom>
           Create New Quiz
         </Typography>
 
-        {/* Title & Description */}
+        {/* Course Info */}
+        <Card sx={{ p: 2, mb: 3 }}>
+          <CardContent>
+            <TextField
+              fullWidth
+              label="Course Title"
+              name="course.title"
+              value={values.course.title}
+              onChange={handleChange}
+              error={
+                touched.course?.title && Boolean(errors.course?.title)
+              }
+              helperText={touched.course?.title && errors.course?.title}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              multiline
+              rows={3}
+              label="Course Description"
+              name="course.description"
+              value={values.course.description}
+              onChange={handleChange}
+              error={
+                touched.course?.description &&
+                Boolean(errors.course?.description)
+              }
+              helperText={
+                touched.course?.description && errors.course?.description
+              }
+            />
+          </CardContent>
+        </Card>
+
+        {/* Quiz Info */}
         <Card sx={{ p: 2, mb: 3 }}>
           <CardContent>
             <TextField
@@ -85,7 +174,7 @@ const AddQuiz = () => {
               fullWidth
               multiline
               rows={3}
-              label="Description"
+              label="Quiz Description"
               name="description"
               value={values.description}
               onChange={handleChange}
@@ -108,43 +197,29 @@ const AddQuiz = () => {
                 <Card key={qIndex} sx={{ mb: 2, p: 2 }}>
                   <CardContent>
                     {/* Question Text */}
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <TextField
-                        fullWidth
-                        label={`Question ${qIndex + 1}`}
-                        name={`questions[${qIndex}].question`}
-                        value={q.question}
-                        onChange={handleChange}
-                        error={
-                          touched.questions?.[qIndex]?.question &&
-                          typeof errors.questions?.[qIndex] !== "string" &&
-                          Boolean(errors.questions?.[qIndex]?.question)
-                        }
-                        helperText={
-                          touched.questions?.[qIndex]?.question &&
-                          typeof errors.questions?.[qIndex] !== "string"
-                            ? errors.questions?.[qIndex]?.question
-                            : ""
-                        }
-                        sx={{ mb: 2 }}
-                      />
-                      <IconButton
-                        color="error"
-                        onClick={() => arrayHelpers.remove(qIndex)}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Box>
+                    <TextField
+                      fullWidth
+                      label={`Question ${qIndex + 1}`}
+                      name={`questions[${qIndex}].question`}
+                      value={q.question}
+                      onChange={handleChange}
+                      sx={{ mb: 2 }}
+                    />
 
-                    {/* Answers with correctAnswer selection */}
+                    {/* Answers */}
                     <RadioGroup
                       value={q.correctAnswer}
-                      onChange={(e) =>
-                        setFieldValue(
-                          `questions[${qIndex}].correctAnswer`,
-                          parseInt(e.target.value)
-                        )
-                      }
+                      onChange={(e) => {
+                        const correctIndex = parseInt(e.target.value);
+
+                        // update both correctAnswer and isCorrect flags
+                        setFieldValue(`questions[${qIndex}].correctAnswer`, correctIndex);
+                        const updatedAnswers = q.answers.map((ans, idx) => ({
+                          ...ans,
+                          isCorrect: idx === correctIndex,
+                        }));
+                        setFieldValue(`questions[${qIndex}].answers`, updatedAnswers);
+                      }}
                     >
                       {q.answers.map((a, aIndex) => (
                         <Box
@@ -159,19 +234,9 @@ const AddQuiz = () => {
                           <TextField
                             fullWidth
                             label={`Answer ${aIndex + 1}`}
-                            name={`questions[${qIndex}].answers[${aIndex}]`}
-                            value={a}
+                            name={`questions[${qIndex}].answers[${aIndex}].text`}
+                            value={a.text}
                             onChange={handleChange}
-                            error={
-                              touched.questions?.[qIndex]?.answers?.[aIndex] &&
-                              Boolean(
-                                errors.questions?.[qIndex]?.answers?.[aIndex]
-                              )
-                            }
-                            helperText={
-                              touched.questions?.[qIndex]?.answers?.[aIndex] &&
-                              errors.questions?.[qIndex]?.answers?.[aIndex]
-                            }
                             sx={{ mb: 1 }}
                           />
                         </Box>
@@ -185,7 +250,7 @@ const AddQuiz = () => {
                       onClick={() =>
                         setFieldValue(`questions[${qIndex}].answers`, [
                           ...q.answers,
-                          "",
+                          { text: "" },
                         ])
                       }
                     >
@@ -195,7 +260,6 @@ const AddQuiz = () => {
                 </Card>
               ))}
 
-              {/* Add Question Button */}
               <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
                 <Button
                   variant="contained"
@@ -203,7 +267,7 @@ const AddQuiz = () => {
                   onClick={() =>
                     arrayHelpers.push({
                       question: "",
-                      answers: [""],
+                      answers: [{ text: "" }],
                       correctAnswer: 0,
                     })
                   }
