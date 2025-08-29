@@ -3,35 +3,35 @@ import {
   Typography,
 } from "@mui/material";
 import CourseCard from "../components/Course/CourseCard";
-import type { ICourse } from "../interfaces/course";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../lib/store";
+import { useCallback, useEffect } from "react";
+import { deleteCourse, fetchCourses } from "../lib/slices/course";
+import Loader from "../components/Loader/Loader";
 
-const courses :ICourse[]= [
-  {
-    _id: "1",
-    title: "React for Beginners",
-    description:
-      "Learn the basics of React including components, hooks, and state management.",
-    numberQuiz:10
-  },
-  {
-    _id: "2",
-    title: "Node.js Fundamentals",
-    description:
-    "Understand how to build scalable backend applications using Node.js and Express.",
-    numberQuiz:3
-  },
-  {
-    _id: "3",
-    title: "MongoDB Masterclass",
-    description:
-    "Get hands-on experience with MongoDB, Mongoose, and NoSQL best practices.",
-    numberQuiz:7
-  },
-];
 
 const Course = () => {
+  const {courses,loading,error}=useSelector((state:RootState)=>state.course);
+  const {decoded}=useSelector((state:RootState)=>state.users);
+  const dispatch=useDispatch<AppDispatch>();
+  console.log(courses);
+  console.log(error);
+
+  useEffect(()=>{
+    dispatch(fetchCourses());
+  },[dispatch])
+
+  const handleDeleteCourse=useCallback((courseId:string)=>{
+    dispatch(deleteCourse(courseId))
+    dispatch(fetchCourses());
+  },[dispatch])
   return (
     <Box sx={{ p: 4 }}>
+      {loading &&
+        <Box sx={{position:"fixed" ,left:0,top:0,width:"100%",minHeight:"100%", background:"rgba(204, 204, 204, 0.6)",display:"flex",justifyContent:"center",alignItems:"center",zIndex:"10"}}>
+          <Loader/>
+        </Box>
+      }
       <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="center">
         Available Courses
       </Typography>
@@ -45,9 +45,15 @@ const Course = () => {
           justifyContent: "center",
         }}
       >
-        {courses.map((course) => (
-          <CourseCard course={course}/>
-        ))}
+        {courses.length>0?
+          courses.map((course) => (
+            <CourseCard key={course._id} course={course} decoded={decoded} handleDeleteCourse={handleDeleteCourse}/>
+          ))
+        :
+        <Typography variant="body1" color="textSecondary">
+          No courses available.
+        </Typography>
+        }
       </Box>
     </Box>
   );

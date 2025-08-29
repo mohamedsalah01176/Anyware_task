@@ -2,6 +2,7 @@ export interface IUserBody{
   _id:string,
   name:string,
   email:string,
+  teacherId:string;
   password:string,
   role:'student' | 'teacher',
   createdAt:Date

@@ -20,9 +20,13 @@ interface IProps {
   setTitle: (val: string) => void;
   body: string;
   setBody: (val: string) => void;
+  errors:{
+    title:string,
+    body:string
+  }
 }
 
-const UpdateAnnouncment = ({openDialog,setOpenDialog,editing,handleSave,title,setTitle,body,setBody}:IProps) => {
+const UpdateAnnouncment = ({openDialog,setOpenDialog,editing,handleSave,title,setTitle,body,setBody,errors}:IProps) => {
 
 
     
@@ -36,6 +40,8 @@ const UpdateAnnouncment = ({openDialog,setOpenDialog,editing,handleSave,title,se
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             sx={{ mb: 2 }}
+            error={Boolean(errors?.title)}
+            helperText={errors?.title}
           />
           <TextField
             label="Body"
@@ -45,6 +51,8 @@ const UpdateAnnouncment = ({openDialog,setOpenDialog,editing,handleSave,title,se
             value={body}
             onChange={(e) => setBody(e.target.value)}
             sx={{ mb: 2 }}
+            error={Boolean(errors?.body)}
+            helperText={errors?.body}
           />
           {/* <TextField
             label="Author"

@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
   Box,
   Button,
@@ -12,8 +11,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { theme } from "../util/theme";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../assets/lib/slices/user";
-import type { AppDispatch, RootState } from "../assets/lib/store";
+import { register, fetchTeachersId } from "../lib/slices/user";
+import type { AppDispatch, RootState } from "../lib/store";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 export interface IUserBody {
   _id: string;
@@ -30,16 +31,22 @@ const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
     .min(6, "Password should be at least 6 characters")
+    .matches(/^(?=.*[a-zA-Z])(?=.*\d)/, "Password must contain at least one letter and one number")
     .required("Password is required"),
   role: Yup.string().oneOf(["student", "teacher"]).required("Role is required"),
 });
 
 const Register = () => {
   const dispatch=useDispatch<AppDispatch>();
-  const {data,error}=useSelector((state: RootState) => state.users)
+  const {data,error,teachersId}=useSelector((state: RootState) => state.users);
+  const nav=useNavigate();
 
-  console.log(data,"data")
-  console.log(error,"error")
+  useEffect(()=>{
+    dispatch(fetchTeachersId())
+  },[dispatch])
+  console.log(teachersId,"sssssss")
+  console.log(error);
+
   const formik = useFormik<Omit<IUserBody, "_id" | "createdAt">>({
     initialValues: {
       name: "",
@@ -49,10 +56,39 @@ const Register = () => {
       teacherId: "",
     },
     validationSchema,
-    onSubmit: (values) => {
+    onSubmit:async (values, { setFieldError }) => {
       console.log("✅ Register Data:", values);
-      // Here you can call your API with axios.post("/register", values);
-      dispatch(register(values))
+      if (values.role === "student") {
+        if (!values.teacherId) {
+            setFieldError("teacherId", "Please enter a Teacher ID");
+            return;
+        }
+
+        const teacherExists = teachersId.some((t:{teacherId:string}) => t.teacherId === values.teacherId);
+        if (!teacherExists) {
+          setFieldError("teacherId", "Teacher ID not found");
+          return;
+        }
+      }else{
+        if (!values.teacherId) {
+            setFieldError("teacherId", "Please enter a Teacher ID");
+            return;
+        }
+
+        const teacherExists = teachersId.some((t:{teacherId:string}) => t.teacherId === values.teacherId);
+        if (teacherExists) {
+          setFieldError("teacherId", "Teacher ID ID is already taken");
+          return;
+      }
+    }
+      const actionResult= await dispatch(register(values));
+      const payload = actionResult.payload as { status: string; message: string; token: string };
+      console.log(payload,"gggggggggggggg")
+      if(payload.status === "success"){
+        setTimeout(()=>{
+          nav("/login")
+        },1000)
+      }
     },
   });
 
@@ -127,10 +163,11 @@ const Register = () => {
               name="teacherId"
               value={formik.values.teacherId}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               error={formik.touched.teacherId && Boolean(formik.errors.teacherId)}
               helperText={formik.touched.teacherId && formik.errors.teacherId}
             />
-            {/* Submit */}
+
             <Button
               type="submit"
               variant="contained"

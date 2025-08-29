@@ -1,39 +1,37 @@
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
   Container,
-  // Grid,
-  Chip,
   Button,
   Paper,
-  Avatar,
-  List,
-  ListItem,
-  ListItemText,
   Accordion,
   AccordionSummary,
   AccordionDetails
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
-  Assignment as AssignmentIcon,
   Quiz as QuizIcon,
-  Event as EventIcon,
   Announcement as AnnouncementIcon,
-  School as SchoolIcon,
-  Person as PersonIcon
 } from '@mui/icons-material';
 import { Grid } from "@mui/material";
 import { theme } from '../util/theme';
 import { useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../lib/store';
+import { useEffect } from 'react';
+import { fetchAnnouncements } from '../lib/slices/announcement';
+import AnnoincementCardForDashboard from '../components/Annoincement/AnnoincementCardForDashboard';
 
 
 function MainDashboar() {
 
   const nav=useNavigate();
-
+  const {announcements}=useSelector((state:RootState)=>state.announcement);
+  const dispatch=useDispatch<AppDispatch>()
+  useEffect(()=>{
+    dispatch(fetchAnnouncements())
+  },[dispatch])
+  console.log(announcements)
   return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* Header Section */}
@@ -51,110 +49,36 @@ function MainDashboar() {
 
         <Grid container spacing={4}>
           {/* Left Column - Announcements */}
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={8} width={"100%"}>
             <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
               <AnnouncementIcon sx={{ mr: 1 }} /> Announcements
             </Typography>
-            
-            <Card elevation={3} sx={{ mb: 3 }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: '#3f51b5', mr: 2 }}>
-                    <PersonIcon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="h6">Mr Ahmed Mocash</Typography>
-                    <Typography variant="body2" color="textSecondary">Posted: Dec 15, 2023</Typography>
-                  </Box>
-                </Box>
-                <Typography variant="body1" paragraph>
-                  Hi my hero(s) just want you ready to our exams and focus on remaining assessments as pain more grafias, good luck my warriors.
-                </Typography>
-              </CardContent>
-            </Card>
+            {announcements.length>0?
+              announcements.map((item)=>{
+                return(
+                <AnnoincementCardForDashboard item={item} />
+                )
+              }) 
+              :
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ textAlign: "center", mt: 3 }}
+              >
+                No announcements available.
+              </Typography>
+            }
 
-            <Card elevation={3} sx={{ mb: 3 }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: '#f50057', mr: 2 }}>
-                    <PersonIcon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="h6">Mrs Salma Ahmed</Typography>
-                    <Typography variant="body2" color="textSecondary">Posted: Dec 14, 2023</Typography>
-                  </Box>
-                </Box>
-                <Typography variant="body1" paragraph>
-                  Help my students, I want to announce that she met quite well in within 3 days and will cover the whole event. Add and subtract numbers. Study hard (good luck).
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <Card elevation={3} sx={{ mb: 3 }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: '#4caf50', mr: 2 }}>
-                    <SchoolIcon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="h6">School Management</Typography>
-                    <Typography variant="body2" color="textSecondary">Posted: Dec 13, 2023</Typography>
-                  </Box>
-                </Box>
-                <Typography variant="body1" paragraph>
-                  Consciously consulted training. Warranty That gets ready-for-the-day old is fraud (such as coming by CEO Malcolm III, Cloakeya-Taker High School at TugimooK, Eight Unit, want me ready to get exams and focus on remaining assessments so pain more grafias, good luck my warriors).
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <Card elevation={3}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: '#ff9800', mr: 2 }}>
-                    <PersonIcon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="h6">Events Manager</Typography>
-                    <Typography variant="body2" color="textSecondary">Posted: Dec 12, 2023</Typography>
-                  </Box>
-                </Box>
-                <Typography variant="body1" paragraph>
-                  Wellness. Can't wait our upcoming trip so this next weekend. The trip will be to Dreamgain, and Plymouth & Us Brok won't eat please contact your close teacher.
-                </Typography>
-              </CardContent>
-            </Card>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid item width={"100%"}>
 
             {/* Start Quiz Section */}
             <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-              <QuizIcon sx={{ mr: 1 }} /> Start Quiz
+              <QuizIcon sx={{ mr: 1 }} /> Tips
             </Typography>
             
-            <Box sx={{display:"flex",alignItems:"start",gap:3,flexWrap:"wrap",justifyContent:"center"}}>
-              <Card elevation={3}>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <AssignmentIcon color="secondary" sx={{ mr: 1 }} />
-                    <Typography variant="h6">12-12 Assignment</Typography>
-                  </Box>
-                  <List dense>
-                    <ListItem>
-                      <ListItemText primary="Course: Article #12" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText primary="Topic: 5thth – 4thth July" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText primary="Due: 30 Dec 2023 - 09:00 PM" />
-                    </ListItem>
-                  </List>
-                  <Button variant="contained" fullWidth sx={{ mt: 2 }}>
-                    Start Quiz
-                  </Button>
-                </CardContent>
-              </Card>
+            <Box sx={{display:"flex",alignItems:"start",gap:3,flexWrap:"wrap",justifyContent:"center",width:"100%"}}>
 
               <Accordion elevation={3}  sx={{ margin: "0 !important",}}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>

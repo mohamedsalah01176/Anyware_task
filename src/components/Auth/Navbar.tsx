@@ -12,7 +12,7 @@ const AuthNavbar: React.FC = () => {
   mr: 1,
   fontWeight: pathname === path ? "bold" : "normal",
   borderBottom: pathname === path ? "2px solid #fff" : "2px solid transparent",
-  borderRadius: 0, // optional: remove button rounding for border alignment
+  borderRadius: 0,
 });
   return (
     <AppBar position="static" color="primary" elevation={1}>

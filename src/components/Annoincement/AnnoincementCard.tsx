@@ -19,10 +19,10 @@ interface IProps{
   item:IAnnouncementItem,
   openEdit:(item:IAnnouncementItem)=>void;
   handleDelete:(id:string)=>void;
-
+  setAnnouncementId:(id:string)=>void;
 }
 
-const AnnoincementCard = ({item,openEdit,handleDelete}:IProps) => {
+const AnnoincementCard = ({item,openEdit,handleDelete,setAnnouncementId}:IProps) => {
   return (
     <Card sx={{ height: "100%",width:"100%", display: "flex", flexDirection: "column" }} elevation={3}>
       <CardContent sx={{ flexGrow: 1 }}>
@@ -46,7 +46,7 @@ const AnnoincementCard = ({item,openEdit,handleDelete}:IProps) => {
       <CardActions sx={{ justifyContent: "flex-end" }}>
         <IconButton
           size="small"
-          onClick={() => openEdit(item)}
+          onClick={() =>{setAnnouncementId(item._id); openEdit(item)}}
           aria-label="edit"
           color="inherit"
         >

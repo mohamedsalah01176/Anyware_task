@@ -5,6 +5,7 @@ import { Outlet, useLocation } from 'react-router';
 import { Box } from '@mui/material';
 import { theme } from '../util/theme';
 import { useTranslation } from 'react-i18next';
+import { ToastContainer } from 'react-toastify';
 
 const UserLayout = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -25,9 +26,10 @@ const UserLayout = () => {
   },[pathname])
   return (
     <Box sx={{background:theme.palette.secondary.main}}>
+    <ToastContainer />
       <AppBarComponenet isClosing={isClosing} setIsClosing={setIsClosing} setMobileOpen={setMobileOpen} />
       <ResponsiveDrawer mobileOpen={mobileOpen} setMobileOpen={setMobileOpen}  setIsClosing={setIsClosing} />
-      <Box sx={{marginTop:"60px",marginLeft: { sm: "240px" },background:theme.palette.secondary.main,minHeight:"89vh",marginBottom:0}}>
+      <Box  sx={{marginTop:"60px",marginLeft: { sm: "240px" },background:theme.palette.secondary.main,minHeight:"89vh",marginBottom:"0px",padding:"0px"}}>
         <Outlet/>
       </Box>
     </Box>
