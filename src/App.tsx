@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@mui/material'
+import { Box, CssBaseline, ThemeProvider } from '@mui/material'
 import './App.css'
 import { theme } from './util/theme'
 import { createBrowserRouter } from "react-router";
