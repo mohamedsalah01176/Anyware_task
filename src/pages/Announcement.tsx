@@ -113,7 +113,7 @@ const Announcement: React.FC = () => {
   return (
     <Container  sx={{ py: 4 }}>
        {loading &&
-        <Box sx={{position:"fixed" ,left:0,top:0,width:"100%",minHeight:"100%", background:"rgba(204, 204, 204, 0.6)",display:"flex",justifyContent:"center",alignItems:"center",zIndex:"10"}}>
+        <Box sx={{position:"fixed" ,left:0,top:0,width:"100%",minHeight:"100%", background:theme.palette.secondary.main,display:"flex",justifyContent:"center",alignItems:"center",zIndex:"10"}}>
           <Loader/>
         </Box>
       }
