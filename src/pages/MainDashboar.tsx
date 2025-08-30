@@ -53,8 +53,8 @@ function MainDashboar() {
             <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
               <AnnouncementIcon sx={{ mr: 1 }} /> Announcements
             </Typography>
-            {announcements.length>0?
-              announcements.map((item)=>{
+            {announcements?.length>0?
+              announcements?.map((item)=>{
                 return(
                 <AnnoincementCardForDashboard item={item} />
                 )

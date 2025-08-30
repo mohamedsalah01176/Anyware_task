@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import type { ICourse } from "../../interfaces/course";
 import { getToken } from "../../util/getToken";
 
-const token = getToken();
 
 export interface QuizState {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,6 +31,7 @@ interface IError {
 
 export const fetchCourses = createAsyncThunk("/api/courses", async () => {
   try {
+    const token =getToken();
     const response = await axios.get(
       `${import.meta.env.VITE_BASE_URL}/api/course`,
       {
@@ -43,6 +43,7 @@ export const fetchCourses = createAsyncThunk("/api/courses", async () => {
     );
     return response.data;
   } catch (errors: unknown) {
+    console.log(errors)
     const err = errors as IError;
     const message = err.response?.data?.messageEn || "Something went wrong!";
     toast.error(message);
@@ -54,6 +55,7 @@ export const fetchCourses = createAsyncThunk("/api/courses", async () => {
 export const deleteCourse = createAsyncThunk(
   "/api/deleteCourse",
   async (courseId: string) => {
+    const token =getToken();
     try {
       const response = await axios.delete(
         `${import.meta.env.VITE_BASE_URL}/api/course/${courseId}`,

@@ -3,7 +3,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getToken } from '../../util/getToken';
 
-const token =getToken();
 
 export interface UserState {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,8 +28,9 @@ interface IErorror{
   }
 }
 
-
 export const fetchAnnouncements = createAsyncThunk("/api/announcement", async () => {
+  const token =getToken();
+  console.log(token,"tttttttttttt")
   try{
         console.log(token,"ssssssssssssssssss")
 
@@ -45,12 +45,13 @@ export const fetchAnnouncements = createAsyncThunk("/api/announcement", async ()
     const err =errors as IErorror;
     const message = err.response?.data?.messageEn || "Something went wrong!";
     toast.error(message);
-    console.log(err)
+    console.log(errors)
   }
 });
 
 export const addAnnouncements = createAsyncThunk("/api/addAnnouncement", async (payload:{title:string,message:string}) => {
   try{
+    const token =getToken();
     const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/announcement?lang=en`,payload,{headers:{
       "Authorization":`Bearer ${token}`,
       "Content-Type":"application/json"
@@ -68,6 +69,7 @@ export const addAnnouncements = createAsyncThunk("/api/addAnnouncement", async (
 
 export const updateAnnouncements = createAsyncThunk("/api/updateAnnouncement", async ({payload,announcementId}:{payload:{title:string,message:string},announcementId:string}) => {
   try{
+    const token =getToken();
     console.log("zzzzzzzzzzzzzz")
     const response = await axios.patch(`${import.meta.env.VITE_BASE_URL}/api/announcement/${announcementId}?lang=en`,payload,{headers:{
       "Authorization":`Bearer ${token}`,
@@ -86,6 +88,7 @@ export const updateAnnouncements = createAsyncThunk("/api/updateAnnouncement", a
 
 export const deleteAnnouncements = createAsyncThunk("/api/deleteAnnouncement", async (announcementId:string) => {
   try{
+    const token =getToken();
     const response = await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/announcement/${announcementId}?lang=en`,{headers:{
       "Authorization":`Bearer ${token}`,
       "Content-Type":"application/json"
