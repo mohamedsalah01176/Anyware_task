@@ -15,6 +15,9 @@ import { register, fetchTeachersId } from "../lib/slices/user";
 import type { AppDispatch, RootState } from "../lib/store";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import useTitle from "../customHook/PageTitle";
+import useMetaDescription from "../customHook/PageDescription";
+import UseMetaPageKeyWordsAndAuther from "../customHook/PageKeyWordsAndAuther";
 
 export interface IUserBody {
   _id: string;
@@ -37,8 +40,13 @@ const validationSchema = Yup.object({
 });
 
 const Register = () => {
+  useTitle("Register ");
+  useMetaDescription("Create a new account in the Test System. Students and teachers can register to access quizzes, courses, and announcements.");
+  UseMetaPageKeyWordsAndAuther({
+    keywords: "register, signup, account, student, teacher",
+  });
   const dispatch=useDispatch<AppDispatch>();
-  const {data,error,teachersId}=useSelector((state: RootState) => state.users);
+  const {error,teachersId}=useSelector((state: RootState) => state.users);
   const nav=useNavigate();
 
   useEffect(()=>{
@@ -98,7 +106,7 @@ const Register = () => {
     <Box sx={{ maxWidth: 500, mx: "auto", pt: 4,minHeight:"92vh", display:"flex",justifyContent:"center",alignItems:"center"}} >
       <Card>
         <CardContent>
-          <Typography variant="h4" gutterBottom textAlign={"center"}>
+          <Typography variant="h4" component="h1" gutterBottom textAlign={"center"}>
             Register
           </Typography>
           <form onSubmit={formik.handleSubmit}>

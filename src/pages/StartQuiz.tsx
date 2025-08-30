@@ -17,10 +17,18 @@ import type { AppDispatch, RootState } from "../lib/store";
 import { getSpecificQuiz } from "../lib/slices/quizze";
 import type { IQuiz } from "../interfaces/quiz";
 import ResultPopup from "../components/StartQuize/ResultPopup";
+import useTitle from "../customHook/PageTitle";
+import useMetaDescription from "../customHook/PageDescription";
+import UseMetaPageKeyWordsAndAuther from "../customHook/PageKeyWordsAndAuther";
 
 
 
 const StartQuiz = () => {
+  useTitle("Start Quiz");
+  useMetaDescription("Start your assigned quizzes in the Test System. Students can attempt questions, submit answers, and track their progress.");
+  UseMetaPageKeyWordsAndAuther({
+    keywords: "start quiz, take quiz, exams, student",
+  });
   const { quizId } = useParams();
   const nav = useNavigate();
   const { quiz }: { quiz: IQuiz | null } = useSelector((state: RootState) => state.quiz);
@@ -96,7 +104,7 @@ const StartQuiz = () => {
       <ResultPopup score={score} openResult={openResult} quiz={quiz} setOpenResult={setOpenResult} />
       <Paper elevation={4} sx={{ p: 4, borderRadius: 3, width: "100%" }}>
         <Box sx={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h5" gutterBottom component="h1">
             {quiz?.course?.title}
           </Typography>
           <Button variant="outlined" color="error" onClick={handleNavigation}>

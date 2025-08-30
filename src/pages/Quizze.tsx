@@ -13,11 +13,19 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../lib/store";
 import {  deleteQuiz, fetchQuizzesForUser } from "../lib/slices/quizze";
 import Loader from "../components/Loader/Loader";
+import useTitle from "../customHook/PageTitle";
+import useMetaDescription from "../customHook/PageDescription";
+import UseMetaPageKeyWordsAndAuther from "../customHook/PageKeyWordsAndAuther";
 
 
 
 
 export default function QuizList() {
+  useTitle("Quizze");
+  useMetaDescription("View the list of quizzes assigned by your teacher in the Test System. Access quiz details, start quizzes, and track your progress.");
+  UseMetaPageKeyWordsAndAuther({
+    keywords: "quiz list, exams, student, teacher",
+  });
   // const [quizzes, setQuizzes] = useState<IQuiz[]>([]);
   const {decoded}=useSelector((state:RootState)=>state.users)
   const [openDialog, setOpenDialog] = useState(false);

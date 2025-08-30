@@ -1,5 +1,4 @@
 // NotFoundPage.jsx
-import React from "react";
 import { Box, Button, Container, Typography, Paper } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import HomeIcon from "@mui/icons-material/Home";
@@ -7,8 +6,16 @@ import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router";
 import { theme } from "../util/theme";
+import useTitle from "../customHook/PageTitle";
+import useMetaDescription from "../customHook/PageDescription";
+import UseMetaPageKeyWordsAndAuther from "../customHook/PageKeyWordsAndAuther";
 
 const NotFoundPage = () => {
+  useTitle("Page Not Found");
+  useMetaDescription("The page you are looking for does not exist. Return to the homepage or navigate using the menu in the Test System.");
+  UseMetaPageKeyWordsAndAuther({
+    keywords: "404, page not found, error, navigation",
+  });
   const navigate = useNavigate();
 
   return (

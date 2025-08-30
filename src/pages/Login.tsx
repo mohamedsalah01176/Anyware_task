@@ -14,6 +14,9 @@ import { LoginFetching } from "../lib/slices/user";
 import type { AppDispatch, RootState } from "../lib/store";
 import { useNavigate } from "react-router";
 import Cookie from "js-cookie"
+import useTitle from "../customHook/PageTitle";
+import useMetaDescription from "../customHook/PageDescription";
+import UseMetaPageKeyWordsAndAuther from "../customHook/PageKeyWordsAndAuther";
 const LoginSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
@@ -26,6 +29,11 @@ const LoginSchema = Yup.object({
 });
 
 const Login = () => {
+  useTitle("Login");
+  useMetaDescription("Login to the Test System to access your dashboard. Teachers and students can securely manage or view exams, courses, and announcements.");
+  UseMetaPageKeyWordsAndAuther({
+    keywords: "login, sign in, student, teacher, dashboard",
+  });
   const dispatch = useDispatch<AppDispatch>();
   const {data}=useSelector((state:RootState)=>state.users)
   const nav=useNavigate();
@@ -65,7 +73,7 @@ const Login = () => {
       >
         <Card sx={{ width: 400, p: 2 }}>
           <CardContent>
-            <Typography variant="h5" gutterBottom textAlign={"center"}>
+            <Typography variant="h5" component="h1" gutterBottom textAlign={"center"}>
               Login
             </Typography>
 
