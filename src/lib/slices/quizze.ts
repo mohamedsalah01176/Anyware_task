@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import { getToken } from "../../util/getToken";
 import type { IQuestion, IQuiz } from "../../interfaces/quiz";
 
-const token = getToken();
 
 export interface QuizState {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,6 +33,7 @@ interface IError {
 
 export const fetchQuizzes = createAsyncThunk("/api/quiz", async () => {
   try {
+    const token =getToken();
     const response = await axios.get(
       `${import.meta.env.VITE_BASE_URL}/api/quiz`,
       {
@@ -45,6 +45,7 @@ export const fetchQuizzes = createAsyncThunk("/api/quiz", async () => {
     );
     return response.data;
   } catch (errors: unknown) {
+    console.log(errors)
     const err = errors as IError;
     const message = err.response?.data?.messageEn || "Something went wrong!";
     toast.error(message);
@@ -53,6 +54,7 @@ export const fetchQuizzes = createAsyncThunk("/api/quiz", async () => {
 });
 
 export const fetchQuizzesForUser = createAsyncThunk("/api/quizForUsers", async () => {
+  const token =getToken();
   console.log(token,"ddddddddddddddddd")
   try {
     const response = await axios.get(
@@ -77,6 +79,7 @@ export const fetchQuizzesForUser = createAsyncThunk("/api/quizForUsers", async (
 export const addQuiz = createAsyncThunk(
   "/api/addQuiz",
   async (payload: { title: string; description: string; questions: IQuestion[] }) => {
+    const token =getToken();
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/quiz?lang=en`,
@@ -91,6 +94,7 @@ export const addQuiz = createAsyncThunk(
       toast.success(response.data.messageEn || response.data.message);
       return response.data;
     } catch (errors: unknown) {
+      console.log(errors)
       const err = errors as IError;
       const message = err.response?.data?.messageEn || "Something went wrong!";
       toast.error(message);
@@ -108,6 +112,7 @@ export const updateQuiz = createAsyncThunk(
     payload: { title: string; description: string; questions: IQuestion[] };
     quizId: string;
   }) => {
+    const token =getToken();
     try {
       const response = await axios.patch(
         `${import.meta.env.VITE_BASE_URL}/api/quiz/${quizId}?lang=en`,
@@ -133,6 +138,7 @@ export const updateQuiz = createAsyncThunk(
 export const getSpecificQuiz = createAsyncThunk(
   "/api/specificQuiz",
   async (quizId: string) => {
+    const token =getToken();
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/api/quiz/${quizId}`,
@@ -146,6 +152,7 @@ export const getSpecificQuiz = createAsyncThunk(
       toast.success(response.data.messageEn || response.data.message);
       return response.data;
     } catch (errors: unknown) {
+      console.log(errors)
       const err = errors as IError;
       const message = err.response?.data?.messageEn || "Something went wrong!";
       toast.error(message);
@@ -157,6 +164,7 @@ export const getSpecificQuiz = createAsyncThunk(
 export const deleteQuiz = createAsyncThunk(
   "/api/deleteQuiz",
   async (quizId: string) => {
+    const token =getToken();
     try {
       const response = await axios.delete(
         `${import.meta.env.VITE_BASE_URL}/api/quiz/${quizId}?lang=en`,

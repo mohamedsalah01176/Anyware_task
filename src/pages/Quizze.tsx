@@ -103,8 +103,8 @@ export default function QuizList() {
         }
       </Box>
       <Grid container spacing={3} sx={{ mt: 2,display:"flex", justifyContent:"center" }} padding={3} paddingTop={7}>
-        {quizzes.length>0?
-          quizzes.map((quiz) => {
+        {quizzes?.length>0?
+          quizzes?.map((quiz) => {
           return(
             <QuizCard key={quiz._id} quiz={quiz} handleSelectQuiz={handleSelectQuiz} handleDeleteQuize={handleDeleteQuize} />
           )

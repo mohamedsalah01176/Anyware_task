@@ -2,10 +2,9 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import type { IUserBody } from '../../interfaces/user';
-import { getToken } from '../../util/getToken';
 import {jwtDecode} from "jwt-decode";
+import { getToken } from '../../util/getToken';
 
-const token =getToken();
 
 export interface UserState {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -96,6 +95,7 @@ export const LoginFetching = createAsyncThunk("/api/login", async (payload:ILogi
 });
 export const fetchSpecificUser = createAsyncThunk("/api/user", async (payload:string) => {
   try{
+    const token =getToken();
     const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/${payload}`,{headers:{
       "Authorization":`Bearer ${token}`,
       "Content-Type":"application/json"
