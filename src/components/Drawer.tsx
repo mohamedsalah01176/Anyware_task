@@ -49,7 +49,7 @@ export default function ResponsiveDrawer({window,setIsClosing,setMobileOpen,mobi
         padding: '16px 0'
       }}>
         <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color:theme.palette.primary.contrastText }}>
-          Anyware SW
+          QuizFlow
         </Typography>
       </Toolbar>
       <Divider />

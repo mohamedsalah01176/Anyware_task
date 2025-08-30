@@ -87,7 +87,7 @@ function MainDashboar() {
             
             <Box sx={{display:"flex",alignItems:"start",gap:3,flexWrap:"wrap",justifyContent:"center",width:"100%"}}>
 
-              <Accordion elevation={3}  sx={{ margin: "0 !important",}}>
+              <Accordion elevation={3}  sx={{ margin: "0 !important",width:"100%"}}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography variant="h6">Exam Preparation Tips</Typography>
                 </AccordionSummary>
