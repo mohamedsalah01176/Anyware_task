@@ -11,6 +11,7 @@ import Loader from "../components/Loader/Loader";
 import useTitle from "../customHook/PageTitle";
 import useMetaDescription from "../customHook/PageDescription";
 import UseMetaPageKeyWordsAndAuther from "../customHook/PageKeyWordsAndAuther";
+import { theme } from "../util/theme";
 
 
 const Course = () => {
