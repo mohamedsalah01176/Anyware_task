@@ -22,12 +22,20 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../lib/store";
 import { addAnnouncements, deleteAnnouncements, fetchAnnouncements, updateAnnouncements } from "../lib/slices/announcement";
 import Loader from "../components/Loader/Loader";
+import useTitle from "../customHook/PageTitle";
+import useMetaDescription from "../customHook/PageDescription";
+import UseMetaPageKeyWordsAndAuther from "../customHook/PageKeyWordsAndAuther";
 
 
 
 
 
 const Announcement: React.FC = () => {
+  useTitle("Announcements ");
+  useMetaDescription("View the latest announcements from teachers in the Test System. Stay updated with important news and course-related information.");
+  UseMetaPageKeyWordsAndAuther({
+    keywords: "announcements, news, updates, teacher, student",
+  });
   const {data,announcements,error,loading}=useSelector((state:RootState)=>state.announcement);
   const {decoded}=useSelector((state:RootState)=>state.users);
   const [query, setQuery] = useState("");

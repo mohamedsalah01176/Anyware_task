@@ -21,10 +21,17 @@ import type { AppDispatch, RootState } from '../lib/store';
 import { useEffect } from 'react';
 import { fetchAnnouncements } from '../lib/slices/announcement';
 import AnnoincementCardForDashboard from '../components/Annoincement/AnnoincementCardForDashboard';
+import useTitle from '../customHook/PageTitle';
+import useMetaDescription from '../customHook/PageDescription';
+import UseMetaPageKeyWordsAndAuther from '../customHook/PageKeyWordsAndAuther';
 
 
 function MainDashboar() {
-
+  useTitle("Dashboard ");
+  useMetaDescription("Main dashboard of the Test System. Teachers and students can access exams, courses, and announcements relevant to their account.");
+  UseMetaPageKeyWordsAndAuther({
+    keywords: "dashboard, exams, courses, teacher, student",
+  });
   const nav=useNavigate();
   const {announcements}=useSelector((state:RootState)=>state.announcement);
   const dispatch=useDispatch<AppDispatch>()
@@ -36,7 +43,7 @@ function MainDashboar() {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* Header Section */}
         <Paper elevation={3} sx={{ p: 4, mb: 4 ,backgroundColor:theme.palette.secondary.light }}>
-          <Typography variant="h4" gutterBottom sx={{color:theme.palette.primary.main}}>
+          <Typography variant="h4" component="h1" gutterBottom sx={{color:theme.palette.primary.main}}>
             EXAMS TIME
           </Typography>
           <Typography variant="h6" paragraph>

@@ -18,6 +18,9 @@ import { addQuiz } from "../lib/slices/quizze";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader/Loader";
+import useTitle from "../customHook/PageTitle";
+import useMetaDescription from "../customHook/PageDescription";
+import UseMetaPageKeyWordsAndAuther from "../customHook/PageKeyWordsAndAuther";
 type AnswerForm = {
   text: string;
   isCorrect:boolean
@@ -69,6 +72,11 @@ const validationSchema = Yup.object({
 
 
 const AddQuiz = () => {
+  useTitle("Add Quize");
+  useMetaDescription("Add new quizzes for students in the Test System. Teachers can define questions, answers, and assign the quiz to courses linked to their account.");
+  UseMetaPageKeyWordsAndAuther({
+    keywords: "add quiz, create quiz, exams, teacher",
+  });
   const { data, loading, error } = useSelector((state: RootState) => state.quiz);
   const dispatch = useDispatch();
   const nav=useNavigate();
@@ -119,7 +127,7 @@ const AddQuiz = () => {
         </Box>
       }
       <Box sx={{ maxWidth: 700, mx: "auto", pt: 4 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" component="h1" gutterBottom>
           Create New Quiz
         </Typography>
 

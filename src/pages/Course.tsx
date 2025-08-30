@@ -8,9 +8,17 @@ import type { AppDispatch, RootState } from "../lib/store";
 import { useCallback, useEffect } from "react";
 import { deleteCourse, fetchCourses } from "../lib/slices/course";
 import Loader from "../components/Loader/Loader";
+import useTitle from "../customHook/PageTitle";
+import useMetaDescription from "../customHook/PageDescription";
+import UseMetaPageKeyWordsAndAuther from "../customHook/PageKeyWordsAndAuther";
 
 
 const Course = () => {
+  useTitle("Courses");
+  useMetaDescription("View all courses assigned to you in the Test System. Access course details, linked quizzes, and teacher announcements.");
+  UseMetaPageKeyWordsAndAuther({
+    keywords: "courses, online tests, teacher, student, quizzes",
+  });
   const {courses,loading,error}=useSelector((state:RootState)=>state.course);
   const {decoded}=useSelector((state:RootState)=>state.users);
   const dispatch=useDispatch<AppDispatch>();
@@ -32,7 +40,7 @@ const Course = () => {
           <Loader/>
         </Box>
       }
-      <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="center">
+      <Typography variant="h4" component="h1" gutterBottom fontWeight="bold" textAlign="center">
         Available Courses
       </Typography>
 
