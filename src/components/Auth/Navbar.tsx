@@ -23,7 +23,7 @@ const AuthNavbar: React.FC = () => {
           to="/"
           style={{ textDecoration: "none", color: "inherit" }}
         >
-          MyQuizApp
+          QuizFlow
         </Typography>
 
         <Box>
